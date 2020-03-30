@@ -58,6 +58,10 @@ class MyWidgetState extends State<MyWidget> {
   int coins = 0;
   Color themeColor;
 
+  int comboTime=0;
+
+  int oldtime = 200, newtime = 0, combo = 1;
+
   Random random = new Random();
 
   int _rup = 0, _tup = 0;
@@ -96,11 +100,13 @@ class MyWidgetState extends State<MyWidget> {
       _highscore = prefs.getInt('highScore') ?? 0;
       _rup = prefs.getInt('rup') ?? 0;
       _tup = prefs.getInt('tup') ?? 0;
-      print(_tup);
+      comboTime = prefs.getInt('combo') ?? 0;
+      comboTime*=25;
       time = time * (_tup + 1);
       _start = time;
       coins = prefs.getInt('coins') ?? score;
-      themeColor= test[prefs.getInt('theme') ?? 0];
+      themeColor = test[prefs.getInt('theme') ?? 0];
+      combo=0;
     });
   }
 
@@ -135,8 +141,12 @@ class MyWidgetState extends State<MyWidget> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Center(
-                          child: ClayText(msg,
-                              emboss: true, size: 30,color: themeColor,)),
+                          child: ClayText(
+                        msg,
+                        emboss: true,
+                        size: 30,
+                        color: themeColor,
+                      )),
                       SizedBox(
                         height: 5.0,
                       ),
@@ -144,20 +154,32 @@ class MyWidgetState extends State<MyWidget> {
                         height: 5.0,
                       ),
                       Center(
-                          child: ClayText("Score: " + score.toString(),
-                              emboss: true, size: 25,color: themeColor,)),
+                          child: ClayText(
+                        "Score: " + score.toString(),
+                        emboss: true,
+                        size: 25,
+                        color: themeColor,
+                      )),
                       SizedBox(
                         height: 10.0,
                       ),
                       Center(
-                          child: ClayText("HighScore: " + _highscore.toString(),
-                              emboss: true, size: 25,color: themeColor,)),
+                          child: ClayText(
+                        "HighScore: " + _highscore.toString(),
+                        emboss: true,
+                        size: 25,
+                        color: themeColor,
+                      )),
                       SizedBox(
                         height: 10.0,
                       ),
                       Center(
-                          child: ClayText("Coins: " + coins.toString(),
-                              emboss: true, size: 25,color: themeColor,)),
+                          child: ClayText(
+                        "Coins: " + coins.toString(),
+                        emboss: true,
+                        size: 25,
+                        color: themeColor,
+                      )),
                       SizedBox(
                         height: 10.0,
                       ),
@@ -175,8 +197,12 @@ class MyWidgetState extends State<MyWidget> {
                                 customBorderRadius:
                                     BorderRadius.all(Radius.circular(32)),
                                 child: Center(
-                                    child: ClayText("Restart",
-                                        emboss: true, size: 25,color: themeColor,)),
+                                    child: ClayText(
+                                  "Restart",
+                                  emboss: true,
+                                  size: 25,
+                                  color: themeColor,
+                                )),
                               ),
                               onTap: () {
                                 Navigator.of(context).pop();
@@ -194,6 +220,8 @@ class MyWidgetState extends State<MyWidget> {
                                   radius = 50;
                                   pr = 10;
                                   score = 0;
+                                  oldtime=200;
+                                  combo=1;
                                   gameover = false;
                                 });
                                 startTimer();
@@ -210,8 +238,12 @@ class MyWidgetState extends State<MyWidget> {
                                   customBorderRadius:
                                       BorderRadius.all(Radius.circular(32)),
                                   child: Center(
-                                      child: ClayText("Back",
-                                          emboss: true, size: 25,color: themeColor,)),
+                                      child: ClayText(
+                                    "Back",
+                                    emboss: true,
+                                    size: 25,
+                                    color: themeColor,
+                                  )),
                                 ),
                                 onTap: () {
                                   Navigator.of(context).push(MaterialPageRoute(
@@ -246,7 +278,12 @@ class MyWidgetState extends State<MyWidget> {
         (posy - radius / 2).toInt() <= (y + 10).toInt() &&
         (posy + radius / 2).toInt() >= (y).toInt()) {
       setState(() {
-        // _start = time;
+        newtime = _start;
+        if (oldtime - newtime <= comboTime) {
+          combo++;
+        } else {
+          combo = 1;
+        }
         _start += 50;
         if (_start > time) _start = time;
         radius += (4 - _rup);
@@ -268,7 +305,8 @@ class MyWidgetState extends State<MyWidget> {
         y2 = random
             .nextInt(MediaQuery.of(context).size.height.toInt())
             .toDouble();
-        score++;
+        score += combo;
+        oldtime = _start;
       });
     }
     if ((posx - radius / 2).toInt() <= (x1 + 10).toInt() &&
@@ -302,12 +340,23 @@ class MyWidgetState extends State<MyWidget> {
       child: new Stack(fit: StackFit.expand, children: <Widget>[
         new Container(color: themeColor),
         Center(
-            child: ClayText(
-          (_start / 100).toString(),
-          emboss: true,
-          size: 50,
-          color: themeColor,
-        )),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+              ClayText(
+                (_start / 100).toString(),
+                emboss: true,
+                size: 50,
+                color: themeColor,
+              ),
+              SizedBox(height: 50,),
+              ClayText(
+                combo > 1 ? (combo).toString() : "",
+                emboss: true,
+                size: 50,
+                color: themeColor,
+              ),
+            ])),
         Positioned(
           child: Container(
             color: Colors.redAccent,

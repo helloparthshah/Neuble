@@ -44,9 +44,9 @@ class MyWidget extends StatefulWidget {
 
 class MyWidgetState extends State<MyWidget> {
   int coins = 0;
-  List<int> upg = [0, 0];
-  /* int _rup = 0, _tup = 0; */
+  List<int> upg = [0, 0, 0];
   Color themeColor = curTheme;
+  int cost = 0;
 
   @override
   void initState() {
@@ -66,6 +66,7 @@ class MyWidgetState extends State<MyWidget> {
     setState(() {
       upg[0] = prefs.getInt('rup') ?? 0;
       upg[1] = prefs.getInt('tup') ?? 0;
+      upg[2] = prefs.getInt('combo') ?? 0;
       coins = prefs.getInt('coins') ?? 0;
       themeColor = test[prefs.getInt('theme') ?? 0];
     });
@@ -76,6 +77,7 @@ class MyWidgetState extends State<MyWidget> {
     await prefs.setInt('coins', coins);
     await prefs.setInt('rup', upg[0]);
     await prefs.setInt('tup', upg[1]);
+    await prefs.setInt('combo', upg[2]);
   }
 
   void showAlert(String msg) {
@@ -157,15 +159,14 @@ class MyWidgetState extends State<MyWidget> {
                     child: ClayText(
                       name,
                       emboss: true,
-                      size: 70,
+                      size: 60,
                       color: themeColor,
                     ),
                   ),
                 ),
                 onTap: () {
-                  print(coins);
                   setState(() {
-                    int cost = 100 * (upg[key] + 1);
+                    cost = 500 * (upg[key] + 1);
                     if ((coins - cost) >= 0 && upg[key] != 3) {
                       coins -= cost;
                       upg[key]++;
@@ -198,7 +199,7 @@ class MyWidgetState extends State<MyWidget> {
                       borderRadius: BorderRadius.all(Radius.circular(32)),
                     ),
                     child: Text(
-                      "100",
+                      "500",
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -215,7 +216,7 @@ class MyWidgetState extends State<MyWidget> {
                       borderRadius: BorderRadius.all(Radius.circular(32)),
                     ),
                     child: Text(
-                      "200",
+                      "1000",
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -232,7 +233,7 @@ class MyWidgetState extends State<MyWidget> {
                       borderRadius: BorderRadius.all(Radius.circular(32)),
                     ),
                     child: Text(
-                      "300",
+                      "2000",
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -275,6 +276,10 @@ class MyWidgetState extends State<MyWidget> {
                       width: 50,
                     ),
                     updCard(1, "Time"),
+                    SizedBox(
+                      width: 50,
+                    ),
+                    updCard(2, "Combo"),
                     SizedBox(
                       width: 50,
                     ),

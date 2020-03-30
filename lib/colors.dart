@@ -43,6 +43,7 @@ class MyWidgetState extends State<MyWidget> {
   int theme = 0;
   List<int> cols = totCols;
   Color themeColor = curTheme;
+  int cost = 500;
 
   @override
   void initState() {
@@ -165,9 +166,7 @@ class MyWidgetState extends State<MyWidget> {
                   ),
                 ),
                 onTap: () {
-                  print(coins);
                   setState(() {
-                    int cost = 100;
                     if ((coins - cost) >= 0 && cols[key] != 1) {
                       coins -= cost;
                       cols[key]++;
@@ -178,7 +177,6 @@ class MyWidgetState extends State<MyWidget> {
                     }
                     if (cols[key] == 1) theme = key;
                     check();
-                    print(theme);
                   });
                 }),
           ),
@@ -198,7 +196,7 @@ class MyWidgetState extends State<MyWidget> {
                   borderRadius: BorderRadius.all(Radius.circular(32)),
                 ),
                 child: Text(
-                  key==0?"Free":"100",
+                  key==0?"Free":cost.toString(),
                   textAlign: TextAlign.center,
                 ),
               ),

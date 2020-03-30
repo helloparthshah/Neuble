@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
         backgroundColor: curTheme,
         body: Center(
           child: ClayText(
-            "Game",
+            "Neuble",
             emboss: true,
             size: 50,
             color: curTheme,
