@@ -104,7 +104,7 @@ class ColorsPageState extends State<ColorsPage> {
                       SizedBox(
                         height: 40.0,
                       ),
-                      InkWell(
+                      GestureDetector(
                           child: ClayContainer(
                             color: themeColor,
                             width: 30,
@@ -135,7 +135,7 @@ class ColorsPageState extends State<ColorsPage> {
             height: 10,
           ),
           Center(
-            child: InkWell(
+            child: GestureDetector(
                 child: ClayContainer(
                   emboss: cols[key] == 1 ? false : true,
                   curveType:
@@ -226,18 +226,21 @@ class ColorsPageState extends State<ColorsPage> {
               SizedBox(
                 height: 20,
               ),
-              InkWell(
+              GestureDetector(
                   child: ClayContainer(
                     color: themeColor,
                     width: 100,
                     height: 45,
                     customBorderRadius: BorderRadius.all(Radius.circular(40)),
                     child: Center(
-                        child: ClayText(
-                      "Back",
-                      emboss: true,
-                      size: 20,
-                      color: themeColor,
+                        child: Material(
+                      color: Colors.transparent,
+                      child: ClayText(
+                        "Back",
+                        emboss: true,
+                        size: 20,
+                        color: themeColor,
+                      ),
                     )),
                   ),
                   onTap: () {

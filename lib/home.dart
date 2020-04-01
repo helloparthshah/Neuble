@@ -1,23 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:game/onboarding.dart';
 import 'package:game/themes.dart';
 import 'package:game/upgrades.dart';
 import 'package:clay_containers/clay_containers.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'game.dart';
 
-class MyApp extends StatelessWidget {
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([]);
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Neuble',
       debugShowCheckedModeBanner: false,
       home: Home(),
+      builder: (BuildContext context, Widget child) {
+        final MediaQueryData data = MediaQuery.of(context);
+        return MediaQuery(
+          data: data.copyWith(
+            textScaleFactor: 1.0,
+          ),
+          child: child,
+        );
+      },
     );
   }
 }
@@ -34,6 +45,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   int _highscore = 0;
   int coins = 0;
   Color themeColor = curTheme;
+
   @override
   void initState() {
     super.initState();
@@ -62,12 +74,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     getHighScore();
-    /* if (_animationController.value == 1)
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Upgrades()),
-      ); */
-    /* runApp(GamePage()); */
+
     return Scaffold(
       backgroundColor: themeColor,
       body: Column(
@@ -106,51 +113,76 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ),
           SizedBox(height: 50),
           GestureDetector(
+            child: Hero(
+              tag: 'btn1',
               child: ClayContainer(
                 color: themeColor,
                 width: 150,
                 height: 55,
                 customBorderRadius: BorderRadius.all(Radius.circular(40)),
                 child: Center(
+                  child: Material(
+                    color: Colors.transparent,
                     child: ClayText(
-                  "Start!",
-                  emboss: true,
-                  size: 25,
-                  color: themeColor,
-                )),
+                      "Start!",
+                      emboss: true,
+                      size: 25,
+                      color: themeColor,
+                      style: TextStyle(decoration: TextDecoration.none),
+                    ),
+                  ),
+                ),
               ),
-              onTap: () {
-                setState(() {
-                  _animationController.forward();
-                });
-                Future.delayed(const Duration(seconds: 5), () {
+            ),
+            onTap: () {
+              setState(() {
+                _animationController.forward();
+              });
+              Future.delayed(
+                const Duration(seconds: 5),
+                () {
                   Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => GamePage()),
-                  );
-                });
-              }),
+                      context,
+                      PageTransition(
+                          type: PageTransitionType.fade,
+                          duration: Duration(milliseconds: 500),
+                          child: GamePage()));
+                },
+              );
+            },
+          ),
           SizedBox(height: 25),
           GestureDetector(
+            child: Hero(
+              tag: 'btn2',
               child: ClayContainer(
                 color: themeColor,
                 width: 150,
                 height: 55,
                 customBorderRadius: BorderRadius.all(Radius.circular(40)),
                 child: Center(
+                  child: Material(
+                    color: Colors.transparent,
                     child: ClayText(
-                  "Upgrades",
-                  emboss: true,
-                  size: 25,
-                  color: themeColor,
-                )),
+                      "Upgrades",
+                      emboss: true,
+                      size: 25,
+                      color: themeColor,
+                      style: TextStyle(decoration: TextDecoration.none),
+                    ),
+                  ),
+                ),
               ),
-              onTap: () {
-                Navigator.push(
+            ),
+            onTap: () {
+              Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Upgrades()),
-                );
-              }),
+                  PageTransition(
+                      type: PageTransitionType.fade,
+                      duration: Duration(milliseconds: 500),
+                      child: Upgrades()));
+            },
+          ),
           SizedBox(height: 50),
           ClayText(
             "Highscore: " + _highscore.toString(),
@@ -186,7 +218,93 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   onTap: () {
-                    reset();
+                    showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          backgroundColor: themeColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(32.0))),
+                          content: Container(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Center(
+                                    child: ClayText(
+                                  "Alert",
+                                  emboss: true,
+                                  size: 30,
+                                  color: themeColor,
+                                )),
+                                SizedBox(
+                                  height: 5.0,
+                                ),
+                                SizedBox(
+                                  height: 5.0,
+                                ),
+                                Center(
+                                    child: ClayText(
+                                  "Are You Sure?",
+                                  emboss: true,
+                                  size: 25,
+                                  color: themeColor,
+                                )),
+                                SizedBox(
+                                  height: 40.0,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    GestureDetector(
+                                        child: ClayContainer(
+                                          color: themeColor,
+                                          width: 100,
+                                          height: 45,
+                                          customBorderRadius: BorderRadius.all(
+                                              Radius.circular(32)),
+                                          child: Center(
+                                              child: ClayText(
+                                            "NO",
+                                            emboss: true,
+                                            size: 25,
+                                            color: themeColor,
+                                          )),
+                                        ),
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                        }),
+                                    GestureDetector(
+                                        child: ClayContainer(
+                                          color: themeColor,
+                                          width: 100,
+                                          height: 45,
+                                          customBorderRadius: BorderRadius.all(
+                                              Radius.circular(32)),
+                                          child: Center(
+                                              child: ClayText(
+                                            "YES",
+                                            emboss: true,
+                                            size: 25,
+                                            color: themeColor,
+                                          )),
+                                        ),
+                                        onTap: () {
+                                          reset();
+                                          Navigator.of(context).pop();
+                                        }),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
                   },
                 ),
                 GestureDetector(
@@ -204,7 +322,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       ),
                     ),
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        PageTransition(
+                            type: PageTransitionType.fade,
+                            duration: Duration(milliseconds: 500),
+                            child: Intro()));
+                  },
                 ),
               ],
             ),

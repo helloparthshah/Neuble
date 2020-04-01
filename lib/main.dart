@@ -1,12 +1,28 @@
 import 'dart:async';
 import 'package:clay_containers/clay_containers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:game/themes.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
 
 void main() {
-  runApp(new SplashScreen());
+  runApp(new MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Neuble',
+      home: SplashScreen(),
+      debugShowCheckedModeBanner: false,
+      routes: <String, WidgetBuilder>{
+        '/home': (context) => HomePage(),
+      },
+    );
+  }
 }
 
 class SplashScreen extends StatefulWidget {
@@ -14,11 +30,37 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  AnimationController _animationController;
+
   @override
   void initState() {
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 3),
+    )..addListener(() {
+        setState(() {
+          if (_animationController.value == 1) {
+            Navigator.push(
+                context,
+                PageTransition(
+                    type: PageTransitionType.fade,
+                    duration: Duration(milliseconds: 800),
+                    child: HomePage()));
+          }
+        });
+      });
+
+    _animationController.forward();
+
     super.initState();
-    Timer(Duration(seconds: 2), () => runApp(MyApp()));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   Future<void> q() async {
@@ -28,18 +70,26 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([]);
     q();
-    return MaterialApp(
-      title: 'Neuble',
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: curTheme,
-        body: Center(
-          child: ClayText(
-            "Neuble",
-            emboss: true,
-            size: 50,
-            color: curTheme,
+
+    return Scaffold(
+      backgroundColor: curTheme,
+      body: Center(
+        child: ClayContainer(
+          color: curTheme,
+          height: 200,
+          width: 200,
+          borderRadius: 100,
+          depth: (_animationController.value * 50).toInt(),
+          child: Center(
+            child: ClayText(
+              "Neuble",
+              emboss: true,
+              depth: (_animationController.value * 50).toInt(),
+              size: 50,
+              color: curTheme,
+            ),
           ),
         ),
       ),

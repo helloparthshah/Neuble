@@ -279,18 +279,26 @@ class MyWidgetState extends State<MyWidget> {
                 ),
               ),
               GestureDetector(
-                  child: ClayContainer(
-                    color: themeColor,
-                    width: 100,
-                    height: 45,
-                    customBorderRadius: BorderRadius.all(Radius.circular(40)),
-                    child: Center(
-                        child: ClayText(
-                      "Colors",
-                      emboss: true,
-                      size: 20,
+                  child: Hero(
+                    tag: 'btn1',
+                    child: ClayContainer(
                       color: themeColor,
-                    )),
+                      width: 100,
+                      height: 45,
+                      customBorderRadius: BorderRadius.all(Radius.circular(40)),
+                      child: Center(
+                        child: Material(
+                          color: Colors.transparent,
+                          child: ClayText(
+                            "Colors",
+                            emboss: true,
+                            size: 20,
+                            color: themeColor,
+                            style: TextStyle(decoration: TextDecoration.none),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                   onTap: () {
                     Navigator.push(
@@ -302,18 +310,23 @@ class MyWidgetState extends State<MyWidget> {
                 height: 20,
               ),
               GestureDetector(
-                  child: ClayContainer(
-                    color: themeColor,
-                    width: 100,
-                    height: 45,
-                    customBorderRadius: BorderRadius.all(Radius.circular(40)),
-                    child: Center(
-                        child: ClayText(
-                      "Back",
-                      emboss: true,
-                      size: 20,
+                  child: Hero(
+                    tag: 'btn2',
+                    child: ClayContainer(
                       color: themeColor,
-                    )),
+                      width: 100,
+                      height: 45,
+                      customBorderRadius: BorderRadius.all(Radius.circular(40)),
+                      child: Center(
+                          child: Material(
+                        color: Colors.transparent,
+                        child: ClayText("Back",
+                            emboss: true,
+                            size: 20,
+                            color: themeColor,
+                            style: TextStyle(decoration: TextDecoration.none)),
+                      )),
+                    ),
                   ),
                   onTap: () {
                     Navigator.of(context).pop();

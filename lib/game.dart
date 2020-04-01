@@ -6,6 +6,7 @@ import 'package:clay_containers/clay_containers.dart';
 import 'package:flutter/services.dart';
 import 'package:game/colors.dart';
 import 'package:game/themes.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home.dart';
@@ -238,8 +239,12 @@ class GameState extends State<Game> {
                                   )),
                                 ),
                                 onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => MyApp()));
+                                  Navigator.push(
+                                      context,
+                                      PageTransition(
+                                          type: PageTransitionType.fade,
+                                          duration: Duration(milliseconds: 500),
+                                          child: HomePage()));
                                 }),
                           ],
                         ),
