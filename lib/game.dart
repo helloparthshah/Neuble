@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:clay_containers/clay_containers.dart';
 import 'package:flutter/services.dart';
+import 'package:game/colors.dart';
 import 'package:game/themes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,40 +12,26 @@ import 'home.dart';
 
 Timer _timer;
 
-class Game extends StatelessWidget {
+class GamePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([]);
-    return new Scaffold(
-      resizeToAvoidBottomPadding: false,
-      body: new GamePage(),
+    return MaterialApp(
+      title: 'Neuble',
+      debugShowCheckedModeBanner: false,
+      home: Game(),
     );
   }
 }
 
-class GamePage extends StatefulWidget {
-  @override
-  GamePageState createState() => new GamePageState();
-}
-
-class GamePageState extends State<GamePage> {
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      resizeToAvoidBottomPadding: false,
-      body: new MyWidget(),
-    );
-  }
-}
-
-class MyWidget extends StatefulWidget {
+class Game extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return new MyWidgetState();
+    return new GameState();
   }
 }
 
-class MyWidgetState extends State<MyWidget> {
+class GameState extends State<Game> {
   double posx = 300.0;
   double posy = 300.0;
   double x = 100, y = 100;
@@ -58,14 +45,14 @@ class MyWidgetState extends State<MyWidget> {
   int coins = 0;
   Color themeColor;
 
-  int comboTime=0;
+  int comboTime = 0;
 
   int oldtime = 200, newtime = 0, combo = 1;
 
   Random random = new Random();
 
   int _rup = 0, _tup = 0;
-  int time = 2 * 100;
+  int time = 3 * 100;
 
   int _start = 0;
 
@@ -96,17 +83,22 @@ class MyWidgetState extends State<MyWidget> {
 
   Future<void> getHighScore() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    List<int> upgList = (prefs.getStringList('upgList') ?? ['0', '0', '0'])
+        .map((i) => int.parse(i))
+        .toList();
+
     setState(() {
       _highscore = prefs.getInt('highScore') ?? 0;
-      _rup = prefs.getInt('rup') ?? 0;
-      _tup = prefs.getInt('tup') ?? 0;
-      comboTime = prefs.getInt('combo') ?? 0;
-      comboTime*=25;
+      _rup = upgList[0];
+      _tup = upgList[1];
+      comboTime = upgList[2];
+      comboTime *= 25;
       time = time * (_tup + 1);
       _start = time;
       coins = prefs.getInt('coins') ?? score;
       themeColor = test[prefs.getInt('theme') ?? 0];
-      combo=0;
+      combo = 0;
     });
   }
 
@@ -189,7 +181,7 @@ class MyWidgetState extends State<MyWidget> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            InkWell(
+                            GestureDetector(
                               child: ClayContainer(
                                 color: themeColor,
                                 width: 110,
@@ -220,8 +212,8 @@ class MyWidgetState extends State<MyWidget> {
                                   radius = 50;
                                   pr = 10;
                                   score = 0;
-                                  oldtime=200;
-                                  combo=1;
+                                  oldtime = 200;
+                                  combo = 1;
                                   gameover = false;
                                 });
                                 startTimer();
@@ -230,7 +222,7 @@ class MyWidgetState extends State<MyWidget> {
                             SizedBox(
                               width: 13,
                             ),
-                            InkWell(
+                            GestureDetector(
                                 child: ClayContainer(
                                   color: themeColor,
                                   width: 110,
@@ -317,16 +309,7 @@ class MyWidgetState extends State<MyWidget> {
         gameover = true;
       });
     }
-    if (score > 50) {
-      if ((posx - radius / 2).toInt() <= (x2 + 10).toInt() &&
-          (posx + radius / 2).toInt() >= (x2).toInt() &&
-          (posy - radius / 2).toInt() <= (y2 + 10).toInt() &&
-          (posy + radius / 2).toInt() >= (y2).toInt()) {
-        setState(() {
-          gameover = true;
-        });
-      }
-    }
+
     if (gameover == true) {
       _timer.cancel();
       overAlert("You did an OOPSIE!");
@@ -335,78 +318,74 @@ class MyWidgetState extends State<MyWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return new GestureDetector(
-      onPanUpdate: (details) => onTapDown(context, details),
-      child: new Stack(fit: StackFit.expand, children: <Widget>[
-        new Container(color: themeColor),
-        Center(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-              ClayText(
-                (_start / 100).toString(),
-                emboss: true,
-                size: 50,
-                color: themeColor,
+    return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      body: new GestureDetector(
+        onPanUpdate: (details) => onTapDown(context, details),
+        child: new Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
+            new Container(color: themeColor),
+            Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                  ClayText(
+                    (_start / 100).toString(),
+                    emboss: true,
+                    size: 50,
+                    color: themeColor,
+                  ),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  ClayText(
+                    combo > 1 ? 'x' + (combo).toString() : "",
+                    emboss: true,
+                    size: 50,
+                    color: themeColor,
+                  ),
+                ])),
+            Positioned(
+              child: Container(
+                color: Colors.redAccent,
+                height: pr,
+                width: pr,
               ),
-              SizedBox(height: 50,),
-              ClayText(
-                combo > 1 ? (combo).toString() : "",
-                emboss: true,
-                size: 50,
-                color: themeColor,
-              ),
-            ])),
-        Positioned(
-          child: Container(
-            color: Colors.redAccent,
-            height: pr,
-            width: pr,
-          ),
-          left: x,
-          top: y,
-        ),
-        Positioned(
-          child: Container(
-            color: Colors.blueAccent,
-            height: pr,
-            width: pr,
-          ),
-          left: x1,
-          top: y1,
-        ),
-        Positioned(
-          child: Opacity(
-            opacity: score > 50 ? 1 : 0,
-            child: Container(
-              color: Colors.blueAccent,
-              height: pr,
-              width: pr,
+              left: x,
+              top: y,
             ),
-          ),
-          left: x2,
-          top: y2,
-        ),
-        new Positioned(
-          child: ClayContainer(
-            color: themeColor,
-            height: radius,
-            width: radius,
-            borderRadius: 75,
-            curveType: CurveType.convex,
-            child: Center(
-              child: ClayText(
-                score.toString(),
-                emboss: true,
-                size: radius / 2,
-                color: themeColor,
+            Positioned(
+              child: Container(
+                color: Colors.blueAccent,
+                height: pr,
+                width: pr,
               ),
+              left: x1,
+              top: y1,
             ),
-          ),
-          left: posx - radius / 2,
-          top: posy - radius / 2,
-        )
-      ]),
+            new Positioned(
+              child: ClayContainer(
+                color: themeColor,
+                height: radius,
+                width: radius,
+                borderRadius: 75,
+                curveType: CurveType.convex,
+                child: Center(
+                  child: ClayText(
+                    score.toString(),
+                    emboss: true,
+                    size: radius / 2,
+                    color: themeColor,
+                  ),
+                ),
+              ),
+              left: posx - radius / 2,
+              top: posy - radius / 2,
+            )
+          ],
+        ),
+      ),
     );
   }
 }

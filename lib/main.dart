@@ -5,7 +5,9 @@ import 'package:game/themes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
 
-void main() => runApp(new SplashScreen());
+void main() {
+  runApp(new SplashScreen());
+}
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -17,8 +19,6 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(Duration(seconds: 2), () => runApp(MyApp()));
-    /* Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (BuildContext context) => MyApp()))); */
   }
 
   Future<void> q() async {
@@ -30,6 +30,8 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     q();
     return MaterialApp(
+      title: 'Neuble',
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: curTheme,
         body: Center(

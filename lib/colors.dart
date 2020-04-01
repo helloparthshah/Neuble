@@ -11,37 +11,22 @@ class Col extends StatelessWidget {
     SystemChrome.setEnabledSystemUIOverlays([]);
     return new Scaffold(
       resizeToAvoidBottomPadding: false,
-      body: new ColPage(),
+      body: new ColorsPage(),
     );
   }
 }
 
-class ColPage extends StatefulWidget {
-  @override
-  ColPageState createState() => new ColPageState();
-}
-
-class ColPageState extends State<ColPage> {
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      resizeToAvoidBottomPadding: false,
-      body: new MyWidget(),
-    );
-  }
-}
-
-class MyWidget extends StatefulWidget {
+class ColorsPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return new MyWidgetState();
+    return new ColorsPageState();
   }
 }
 
-class MyWidgetState extends State<MyWidget> {
+class ColorsPageState extends State<ColorsPage> {
   int coins = 0;
   int theme = 0;
-  List<int> cols = totCols;
+  List<int> cols = new List<int>.filled(test.length, 0);
   Color themeColor = curTheme;
   int cost = 500;
 
@@ -52,13 +37,16 @@ class MyWidgetState extends State<MyWidget> {
   }
 
   Future<void> getData() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    List<int> colorsList =
+        (prefs.getStringList('colorsList') ?? List<int>.filled(test.length, 0))
+            .map((i) => int.parse(i))
+            .toList();
+
     setState(() {
-      cols[0] = 1;
-      cols[1] = prefs.getInt('p') ?? 0;
-      cols[2] = prefs.getInt('d') ?? 0;
-      cols[3] = prefs.getInt('r') ?? 0;
-      cols[4] = prefs.getInt('t') ?? 0;
+      cols = colorsList;
+
       themeColor = test[prefs.getInt('theme') ?? 0];
       coins = prefs.getInt('coins') ?? 0;
     });
@@ -66,12 +54,12 @@ class MyWidgetState extends State<MyWidget> {
 
   Future<void> check() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+
     await prefs.setInt('coins', coins);
-    await prefs.setInt('g', cols[0]);
-    await prefs.setInt('p', cols[1]);
-    await prefs.setInt('d', cols[2]);
-    await prefs.setInt('r', cols[3]);
-    await prefs.setInt('t', cols[4]);
+
+    List<String> strList = cols.map((i) => i.toString()).toList();
+    prefs.setStringList("colorsList", strList);
+
     await prefs.setInt('theme', theme);
     setState(() {
       themeColor = test[prefs.getInt('theme') ?? 0];
@@ -153,8 +141,8 @@ class MyWidgetState extends State<MyWidget> {
                   curveType:
                       cols[key] == 1 ? CurveType.convex : CurveType.concave,
                   color: themeColor,
-                  height: 200,
-                  width: 200,
+                  height: 150,
+                  width: 150,
                   borderRadius: 25,
                   child: Center(
                     child: ClipRRect(
@@ -184,7 +172,7 @@ class MyWidgetState extends State<MyWidget> {
             height: 20,
           ),
           SizedBox(
-            width: 200,
+            width: 150,
             child: Opacity(
               opacity: 0.5,
               child: Container(
@@ -196,7 +184,7 @@ class MyWidgetState extends State<MyWidget> {
                   borderRadius: BorderRadius.all(Radius.circular(32)),
                 ),
                 child: Text(
-                  key==0?"Free":cost.toString(),
+                  key == 0 ? "Free" : cost.toString(),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -224,34 +212,15 @@ class MyWidgetState extends State<MyWidget> {
               Container(
                 margin: EdgeInsets.symmetric(vertical: 20.0),
                 height: 250,
-                child: ListView(
+                child: ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 25.0),
                   physics: new BouncingScrollPhysics(),
                   scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    SizedBox(
-                      width: 50,
-                    ),
-                    colorTile(0),
-                    SizedBox(
-                      width: 50,
-                    ),
-                    colorTile(1),
-                    SizedBox(
-                      width: 50,
-                    ),
-                    colorTile(2),
-                    SizedBox(
-                      width: 50,
-                    ),
-                    colorTile(3),
-                    SizedBox(
-                      width: 50,
-                    ),
-                    colorTile(4),
-                    SizedBox(
-                      width: 50,
-                    ),
-                  ],
+                  itemCount: cols.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    print(cols.length);
+                    return colorTile(index);
+                  },
                 ),
               ),
               SizedBox(

@@ -13,8 +13,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       home: Home(),
     );
   }
@@ -60,10 +62,18 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     getHighScore();
-    if (_animationController.value == 1) return Game();
+    /* if (_animationController.value == 1)
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Upgrades()),
+      ); */
+    /* runApp(GamePage()); */
     return Scaffold(
-        backgroundColor: themeColor,
-        body: Column(children: [
+      backgroundColor: themeColor,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
           SizedBox(height: 50),
           Align(
             alignment: Alignment.topCenter,
@@ -95,7 +105,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 ))),
           ),
           SizedBox(height: 50),
-          InkWell(
+          GestureDetector(
               child: ClayContainer(
                 color: themeColor,
                 width: 150,
@@ -113,9 +123,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 setState(() {
                   _animationController.forward();
                 });
+                Future.delayed(const Duration(seconds: 5), () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => GamePage()),
+                  );
+                });
               }),
           SizedBox(height: 25),
-          InkWell(
+          GestureDetector(
               child: ClayContainer(
                 color: themeColor,
                 width: 150,
@@ -149,6 +165,69 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             size: 35,
             color: themeColor,
           ),
-        ]));
+          Padding(
+            padding: const EdgeInsets.all(25.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                GestureDetector(
+                  child: ClayContainer(
+                    color: themeColor,
+                    width: 110,
+                    height: 40,
+                    customBorderRadius: BorderRadius.all(Radius.circular(40)),
+                    child: Center(
+                      child: ClayText(
+                        "Reset",
+                        emboss: true,
+                        size: 20,
+                        color: themeColor,
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    reset();
+                  },
+                ),
+                GestureDetector(
+                  child: ClayContainer(
+                    color: themeColor,
+                    width: 110,
+                    height: 40,
+                    customBorderRadius: BorderRadius.all(Radius.circular(40)),
+                    child: Center(
+                      child: ClayText(
+                        "Help",
+                        emboss: true,
+                        size: 20,
+                        color: themeColor,
+                      ),
+                    ),
+                  ),
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> reset() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setInt('highScore', 0);
+    await prefs.setInt('coins', 10000);
+
+    List<String> upgList = ['0', '0', '0'].map((i) => i.toString()).toList();
+    prefs.setStringList("upgList", upgList);
+
+    List<int> cols = new List<int>.filled(test.length, 0);
+    cols[0] = 1;
+    List<String> colList = cols.map((i) => i.toString()).toList();
+    prefs.setStringList("colorsList", colList);
+
+    await prefs.setInt('theme', 0);
   }
 }

@@ -63,10 +63,13 @@ class MyWidgetState extends State<MyWidget> {
 
   Future<void> getData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    List<int> upgList = (prefs.getStringList('upgList') ?? ['0', '0', '0'])
+        .map((i) => int.parse(i))
+        .toList();
+
     setState(() {
-      upg[0] = prefs.getInt('rup') ?? 0;
-      upg[1] = prefs.getInt('tup') ?? 0;
-      upg[2] = prefs.getInt('combo') ?? 0;
+      upg = upgList;
       coins = prefs.getInt('coins') ?? 0;
       themeColor = test[prefs.getInt('theme') ?? 0];
     });
@@ -75,9 +78,9 @@ class MyWidgetState extends State<MyWidget> {
   Future<void> check() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('coins', coins);
-    await prefs.setInt('rup', upg[0]);
-    await prefs.setInt('tup', upg[1]);
-    await prefs.setInt('combo', upg[2]);
+
+    List<String> strList = upg.map((i) => i.toString()).toList();
+    prefs.setStringList("upgList", strList);
   }
 
   void showAlert(String msg) {
@@ -118,7 +121,7 @@ class MyWidgetState extends State<MyWidget> {
                       SizedBox(
                         height: 40.0,
                       ),
-                      InkWell(
+                      GestureDetector(
                           child: ClayContainer(
                             color: themeColor,
                             width: 30,
@@ -149,17 +152,17 @@ class MyWidgetState extends State<MyWidget> {
             height: 10,
           ),
           Center(
-            child: InkWell(
+            child: GestureDetector(
                 child: ClayContainer(
                   color: themeColor,
-                  height: 200,
-                  width: 200,
+                  height: 150,
+                  width: 150,
                   borderRadius: 25,
                   child: Center(
                     child: ClayText(
                       name,
                       emboss: true,
-                      size: 60,
+                      size: 40,
                       color: themeColor,
                     ),
                   ),
@@ -185,12 +188,12 @@ class MyWidgetState extends State<MyWidget> {
           Opacity(
             opacity: 0.5,
             child: SizedBox(
-              width: 200,
+              width: 150,
               child: Row(
                 children: <Widget>[
                   Container(
                     height: 20,
-                    width: 200 / 3 - 3,
+                    width: 150 / 3 - 3,
                     decoration: BoxDecoration(
                       color: (upg[key] > 0)
                           ? Color(0xFF29c7ac)
@@ -199,16 +202,16 @@ class MyWidgetState extends State<MyWidget> {
                       borderRadius: BorderRadius.all(Radius.circular(32)),
                     ),
                     child: Text(
-                      "500",
+                      '500',
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     width: 4.5,
                   ),
                   Container(
                     height: 20,
-                    width: 200 / 3 - 3,
+                    width: 150 / 3 - 3,
                     decoration: BoxDecoration(
                       color:
                           upg[key] > 1 ? Color(0xFF29c7ac) : Colors.transparent,
@@ -220,12 +223,12 @@ class MyWidgetState extends State<MyWidget> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     width: 4.5,
                   ),
                   Container(
                     height: 20,
-                    width: 200 / 3 - 3,
+                    width: 150 / 3 - 3,
                     decoration: BoxDecoration(
                       color:
                           upg[key] > 2 ? Color(0xFF29c7ac) : Colors.transparent,
@@ -233,7 +236,7 @@ class MyWidgetState extends State<MyWidget> {
                       borderRadius: BorderRadius.all(Radius.circular(32)),
                     ),
                     child: Text(
-                      "2000",
+                      "1500",
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -263,33 +266,19 @@ class MyWidgetState extends State<MyWidget> {
               ),
               Container(
                 margin: EdgeInsets.symmetric(vertical: 20.0),
-                height: 250,
+                height: 230,
                 child: ListView(
+                  padding: EdgeInsets.symmetric(horizontal: 25.0),
                   physics: new BouncingScrollPhysics(),
                   scrollDirection: Axis.horizontal,
                   children: <Widget>[
-                    SizedBox(
-                      width: 50,
-                    ),
                     updCard(0, "Size"),
-                    SizedBox(
-                      width: 50,
-                    ),
                     updCard(1, "Time"),
-                    SizedBox(
-                      width: 50,
-                    ),
                     updCard(2, "Combo"),
-                    SizedBox(
-                      width: 50,
-                    ),
                   ],
                 ),
               ),
-              SizedBox(
-                height: 20,
-              ),
-              InkWell(
+              GestureDetector(
                   child: ClayContainer(
                     color: themeColor,
                     width: 100,
@@ -312,7 +301,7 @@ class MyWidgetState extends State<MyWidget> {
               SizedBox(
                 height: 20,
               ),
-              InkWell(
+              GestureDetector(
                   child: ClayContainer(
                     color: themeColor,
                     width: 100,
