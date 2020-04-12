@@ -52,7 +52,9 @@ class _SplashScreenState extends State<SplashScreen>
         });
       });
 
-    _animationController.forward();
+    Future.delayed(Duration(seconds: 1), () {
+      _animationController.forward();
+    });
 
     super.initState();
   }
