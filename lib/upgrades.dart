@@ -44,12 +44,14 @@ class MyWidget extends StatefulWidget {
 class MyWidgetState extends State<MyWidget> {
   int coins = 0;
   List<int> upg = [0, 0, 0];
-  Color themeColor = curTheme;
+  Color themeColor;
   int cost = 0;
 
   @override
   void initState() {
+    themeColor = curTheme;
     getData();
+    getTheme();
     super.initState();
   }
 
@@ -57,6 +59,8 @@ class MyWidgetState extends State<MyWidget> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       themeColor = test[prefs.getInt('theme') ?? 0];
+      curTheme = themeColor;
+      coins = prefs.getInt('coins') ?? 0;
     });
   }
 
@@ -309,27 +313,28 @@ class MyWidgetState extends State<MyWidget> {
                 height: 20,
               ),
               GestureDetector(
-                  child: Hero(
-                    tag: 'btn2',
-                    child: ClayContainer(
-                      color: themeColor,
-                      width: 100,
-                      height: 45,
-                      customBorderRadius: BorderRadius.all(Radius.circular(40)),
-                      child: Center(
-                          child: Material(
-                        color: Colors.transparent,
-                        child: ClayText("Back",
-                            emboss: true,
-                            size: 20,
-                            color: themeColor,
-                            style: TextStyle(decoration: TextDecoration.none)),
-                      )),
-                    ),
+                child: Hero(
+                  tag: 'btn2',
+                  child: ClayContainer(
+                    color: themeColor,
+                    width: 100,
+                    height: 45,
+                    customBorderRadius: BorderRadius.all(Radius.circular(40)),
+                    child: Center(
+                        child: Material(
+                      color: Colors.transparent,
+                      child: ClayText("Back",
+                          emboss: true,
+                          size: 20,
+                          color: themeColor,
+                          style: TextStyle(decoration: TextDecoration.none)),
+                    )),
                   ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  }),
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+              ),
             ],
           ),
         ),

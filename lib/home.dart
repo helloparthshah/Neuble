@@ -47,13 +47,20 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Color themeColor = curTheme;
 
   @override
-  void initState() {
+  Future<void> initState() {
     super.initState();
     _animationController = AnimationController(
       vsync: this,
       duration: Duration(seconds: 5),
     );
     _animationController.addListener(() => setState(() {}));
+    checkLoad();
+  }
+
+  Future<void> checkLoad() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('first', 1);
+    if ((prefs.getInt('load') ?? 0) == 1) _animationController.value = 100;
   }
 
   Future<void> getHighScore() async {
@@ -134,21 +141,33 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 ),
               ),
             ),
-            onTap: () {
+            onTap: () async {
               setState(() {
                 _animationController.forward();
               });
-              Future.delayed(
-                const Duration(seconds: 5),
-                () {
-                  Navigator.push(
-                      context,
-                      PageTransition(
-                          type: PageTransitionType.fade,
-                          duration: Duration(milliseconds: 500),
-                          child: GamePage()));
-                },
-              );
+              final SharedPreferences prefs =
+                  await SharedPreferences.getInstance();
+              if (prefs.getInt('load') == 1)
+                Navigator.push(
+                    context,
+                    PageTransition(
+                        type: PageTransitionType.fade,
+                        duration: Duration(milliseconds: 500),
+                        child: GamePage()));
+              else {
+                Future.delayed(
+                  const Duration(seconds: 5),
+                  () async {
+                    prefs.setInt('load', 1);
+                    Navigator.push(
+                        context,
+                        PageTransition(
+                            type: PageTransitionType.fade,
+                            duration: Duration(milliseconds: 500),
+                            child: GamePage()));
+                  },
+                );
+              }
             },
           ),
           SizedBox(height: 25),
@@ -352,6 +371,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     cols[0] = 1;
     List<String> colList = cols.map((i) => i.toString()).toList();
     prefs.setStringList("colorsList", colList);
+
+    prefs.setInt('first', 0);
+    prefs.setInt('load', 0);
+
+    setState(() {
+      _animationController.value = 0;
+    });
 
     await prefs.setInt('theme', 0);
   }

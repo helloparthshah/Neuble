@@ -9,7 +9,7 @@ Color teal = Colors.teal; */
 
 List test = [
   Color(0xFFCDD9E7), //default
-  Color(0xFFAB0259), 
+  Color(0xFFAB0259),
   Colors.purple, //purple
   Color(0xFFF8C2C1), //pink
   Color(0xFFE4842D), //red
@@ -19,3 +19,4 @@ List test = [
 ];
 
 Color curTheme;
+int load;

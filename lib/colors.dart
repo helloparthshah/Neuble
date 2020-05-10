@@ -48,6 +48,7 @@ class ColorsPageState extends State<ColorsPage> {
       cols = colorsList;
 
       themeColor = test[prefs.getInt('theme') ?? 0];
+      curTheme = themeColor;
       coins = prefs.getInt('coins') ?? 0;
     });
   }

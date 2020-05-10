@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'home.dart';
 
 class Intro extends StatelessWidget {
   @override
@@ -25,20 +29,34 @@ class Intro extends StatelessWidget {
           ),
         ),
         PageViewModel(
-          title: "Remember!",
-          body: "Red is good blue is bad. STAY AWAY FROM BLUE!!",
-          image:
-              Center(child: Image.asset('lib/assets/img2.png', height: 300.0)),
+          title: "Good Luck!",
+          body: "Try to score the most points without dying.\nYOU GOT THIS!",
+          image: Center(
+              child: Container(
+            height: 300.0,
+          )),
           decoration: const PageDecoration(
             pageColor: Colors.transparent,
           ),
         ),
       ],
       onDone: () {
-        Navigator.of(context).pop();
+        Navigator.push(
+                context,
+                PageTransition(
+                    type: PageTransitionType.fade,
+                    duration: Duration(milliseconds: 800),
+                    child:HomePage()));
+        // Navigator.pop(context);
       },
       onSkip: () {
-        Navigator.of(context).pop();
+        Navigator.push(
+                context,
+                PageTransition(
+                    type: PageTransitionType.fade,
+                    duration: Duration(milliseconds: 800),
+                    child:HomePage()));
+        // Navigator.pop(context);
       },
       globalBackgroundColor: Color(0xFFCDD9E7),
       showSkipButton: true,

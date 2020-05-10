@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:clay_containers/clay_containers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:game/onboarding.dart';
 import 'package:game/themes.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,9 +19,6 @@ class MyApp extends StatelessWidget {
       title: 'Neuble',
       home: SplashScreen(),
       debugShowCheckedModeBanner: false,
-      routes: <String, WidgetBuilder>{
-        '/home': (context) => HomePage(),
-      },
     );
   }
 }
@@ -33,7 +31,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   AnimationController _animationController;
-
+  int first;
   @override
   void initState() {
     _animationController = AnimationController(
@@ -47,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen>
                 PageTransition(
                     type: PageTransitionType.fade,
                     duration: Duration(milliseconds: 800),
-                    child: HomePage()));
+                    child: first == 0 ? Intro() : HomePage()));
           }
         });
       });
@@ -68,6 +66,8 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> q() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     curTheme = test[prefs.getInt('theme') ?? 0];
+    first = prefs.getInt('first') ?? 0;
+    prefs.setInt('load', 0);
   }
 
   @override
