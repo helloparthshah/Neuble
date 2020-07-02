@@ -8,6 +8,7 @@ import 'package:clay_containers/clay_containers.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 import 'game.dart';
 
@@ -55,6 +56,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
     _animationController.addListener(() => setState(() {}));
     checkLoad();
+  }
+
+  playLocal() async {
+    AudioPlayer audioPlayer = AudioPlayer(mode: PlayerMode.LOW_LATENCY);
+    int result =
+        await audioPlayer.play("lib/assets/audio/fur-elise.mp3", isLocal: true);
+    if (result == 1) print("Done");
   }
 
   Future<void> checkLoad() async {
@@ -142,6 +150,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
             ),
             onTap: () async {
+              await playLocal();
               setState(() {
                 _animationController.forward();
               });
