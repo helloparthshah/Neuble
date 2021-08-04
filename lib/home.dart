@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:game/onboarding.dart';
-import 'package:game/themes.dart';
-import 'package:game/upgrades.dart';
 import 'package:clay_containers/clay_containers.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
+import 'package:neuble/onboarding.dart';
+import 'package:neuble/themes.dart';
+import 'package:neuble/upgrades.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:audioplayers/audioplayers.dart';
 
 import 'game.dart';
 
@@ -56,13 +55,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
     _animationController.addListener(() => setState(() {}));
     checkLoad();
-  }
-
-  playLocal() async {
-    AudioPlayer audioPlayer = AudioPlayer(mode: PlayerMode.LOW_LATENCY);
-    int result =
-        await audioPlayer.play("lib/assets/audio/fur-elise.mp3", isLocal: true);
-    if (result == 1) print("Done");
   }
 
   Future<void> checkLoad() async {
@@ -150,7 +142,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
             ),
             onTap: () async {
-              await playLocal();
               setState(() {
                 _animationController.forward();
               });
@@ -371,7 +362,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await prefs.setInt('highScore', 0);
-    await prefs.setInt('coins', 10000);
+    await prefs.setInt('coins', 0);
 
     List<String> upgList = ['0', '0', '0'].map((i) => i.toString()).toList();
     prefs.setStringList("upgList", upgList);

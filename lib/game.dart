@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:clay_containers/clay_containers.dart';
 import 'package:flutter/services.dart';
-import 'package:game/themes.dart';
+import 'package:neuble/themes.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -323,7 +323,7 @@ class GameState extends State<Game> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       body: new GestureDetector(
         onPanUpdate: (details) => onTapDown(context, details),
         child: new Stack(

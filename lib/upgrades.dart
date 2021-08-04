@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:clay_containers/clay_containers.dart';
 import 'package:flutter/services.dart';
-import 'package:game/themes.dart';
+import 'package:neuble/themes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'colors.dart';
@@ -13,7 +13,7 @@ class Upgrades extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([]);
     return new Scaffold(
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       body: new UpgradesPage(),
     );
   }
@@ -28,7 +28,7 @@ class UpgradesPageState extends State<UpgradesPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       body: new MyWidget(),
     );
   }
