@@ -14,7 +14,7 @@ class Intro extends StatelessWidget {
             title: "Play!",
             body: "Drag your finger across the screen in order to move. ",
             image: Center(
-              child: Image.asset('lib/assets/img1.png', height: 300.0),
+              child: Image.asset('assets/img1.png', height: 300.0),
             ),
             decoration: PageDecoration(
               pageColor: Colors.transparent,
@@ -22,8 +22,7 @@ class Intro extends StatelessWidget {
         PageViewModel(
           title: "Remember!",
           body: "Red is good blue is bad. STAY AWAY FROM BLUE!!",
-          image:
-              Center(child: Image.asset('lib/assets/img2.png', height: 300.0)),
+          image: Center(child: Image.asset('assets/img2.png', height: 300.0)),
           decoration: const PageDecoration(
             pageColor: Colors.transparent,
           ),
@@ -42,20 +41,20 @@ class Intro extends StatelessWidget {
       ],
       onDone: () {
         Navigator.push(
-                context,
-                PageTransition(
-                    type: PageTransitionType.fade,
-                    duration: Duration(milliseconds: 800),
-                    child:HomePage()));
+            context,
+            PageTransition(
+                type: PageTransitionType.fade,
+                duration: Duration(milliseconds: 800),
+                child: HomePage()));
         // Navigator.pop(context);
       },
       onSkip: () {
         Navigator.push(
-                context,
-                PageTransition(
-                    type: PageTransitionType.fade,
-                    duration: Duration(milliseconds: 800),
-                    child:HomePage()));
+            context,
+            PageTransition(
+                type: PageTransitionType.fade,
+                duration: Duration(milliseconds: 800),
+                child: HomePage()));
         // Navigator.pop(context);
       },
       globalBackgroundColor: Color(0xFFCDD9E7),
