@@ -387,6 +387,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.2.0"
+  play_games:
+    dependency: "direct main"
+    description:
+      name: play_games
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.5"
   pool:
     dependency: transitive
     description:

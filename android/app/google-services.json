@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "533319136411",
+    "project_id": "neuble-50139051",
+    "storage_bucket": "neuble-50139051.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:533319136411:android:059babee60bc29a9b2023e",
+        "android_client_info": {
+          "package_name": "com.neuble"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "533319136411-2v3k20jio080qavpakgg7rt1i6kmdr75.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neuble",
+            "certificate_hash": "0d018bbfa7f093dbf9d2b9ae39e13094f18c3f39"
+          }
+        },
+        {
+          "client_id": "533319136411-ma2dp6v6km1en234a23hl0hl7b1pasfc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neuble",
+            "certificate_hash": "a626ea8264741bddec2eefc5cb1b893e6ec5d635"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBCdzBF7Jru5x2ZwXDFAlMK8zOtFW0k-4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
