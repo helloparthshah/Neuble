@@ -7,7 +7,6 @@ import 'package:neuble/onboarding.dart';
 import 'package:neuble/themes.dart';
 import 'package:neuble/upgrades.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:play_games/play_games.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'game.dart';
@@ -48,9 +47,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Color themeColor = curTheme;
 
   @override
-  Future<void> initState() {
+  void initState() {
     super.initState();
-    initPlatformState();
 
     _animationController = AnimationController(
       vsync: this,
@@ -58,23 +56,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
     _animationController.addListener(() => setState(() {}));
     checkLoad();
-  }
-
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = (await PlayGames.signIn()).message;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    print(platformVersion);
   }
 
   Future<void> checkLoad() async {

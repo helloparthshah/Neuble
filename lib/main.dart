@@ -7,6 +7,7 @@ import 'package:neuble/themes.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
+import 'package:games_services/games_services.dart';
 
 void main() {
   runApp(new MyApp());
@@ -34,6 +35,8 @@ class _SplashScreenState extends State<SplashScreen>
   int first;
   @override
   void initState() {
+    super.initState();
+    initPlatformState();
     _animationController = AnimationController(
       vsync: this,
       duration: Duration(seconds: 3),
@@ -53,8 +56,22 @@ class _SplashScreenState extends State<SplashScreen>
     Future.delayed(Duration(seconds: 1), () {
       _animationController.forward();
     });
+  }
 
-    super.initState();
+  Future<void> initPlatformState() async {
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      GamesServices.signIn();
+    } on PlatformException {
+      print('error');
+    }
+    /* try {
+      print((await PlayGames.signIn()).message);
+    } on PlatformException {
+      print('error');
+    }
+
+    if (!mounted) return; */
   }
 
   @override
