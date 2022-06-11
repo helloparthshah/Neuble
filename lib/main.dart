@@ -60,11 +60,11 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> initPlatformState() async {
     // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
+    /* try {
       GamesServices.signIn();
     } on PlatformException {
       print('error');
-    }
+    } */
     /* try {
       print((await PlayGames.signIn()).message);
     } on PlatformException {

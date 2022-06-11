@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:clay_containers/clay_containers.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:neuble/onboarding.dart';
+import 'package:neuble/online.dart';
 import 'package:neuble/themes.dart';
 import 'package:neuble/upgrades.dart';
 import 'package:page_transition/page_transition.dart';
@@ -169,6 +170,35 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   },
                 );
               }
+            },
+          ),
+          SizedBox(height: 25),
+          GestureDetector(
+            child: ClayContainer(
+              color: themeColor,
+              width: 150,
+              height: 55,
+              customBorderRadius: BorderRadius.all(Radius.circular(40)),
+              child: Center(
+                child: Material(
+                  color: Colors.transparent,
+                  child: ClayText(
+                    "Online",
+                    emboss: true,
+                    size: 25,
+                    color: themeColor,
+                    style: TextStyle(decoration: TextDecoration.none),
+                  ),
+                ),
+              ),
+            ),
+            onTap: () async {
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      type: PageTransitionType.fade,
+                      duration: Duration(milliseconds: 500),
+                      child: OnlineGame()));
             },
           ),
           SizedBox(height: 25),

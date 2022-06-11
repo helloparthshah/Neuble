@@ -29,6 +29,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   games_services: ^1.0.0
+  web_socket_channel: ^2.2.0
   # play_games: ^0.5.5
 
 dev_dependencies:
