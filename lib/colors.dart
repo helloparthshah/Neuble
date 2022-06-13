@@ -38,11 +38,19 @@ class ColorsPageState extends State<ColorsPage> {
 
   Future<void> getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    List<int> colorsList =
-        (prefs.getStringList('colorsList') ?? List<int>.filled(test.length, 0))
-            .map((i) => int.parse(i))
-            .toList();
+    List<int> colorsList = List<int>.filled(test.length, 0);
+    if (prefs.getStringList('colorsList') != null) {
+      colorsList =
+          prefs.getStringList('colorsList').map((i) => int.parse(i)).toList();
+    } else {
+      colorsList[0] = 1;
+    }
+    /* List<int> colorsList = (prefs.getStringList('colorsList') ??
+            List<String>.filled(test.length, '0'))
+        .map((i) {
+      // check if
+      return int.parse(i);
+    }).toList(); */
 
     setState(() {
       cols = colorsList;

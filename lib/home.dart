@@ -41,7 +41,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  AnimationController _animationController;
   bool flag = false;
   int _highscore = 0;
   int coins = 0;
@@ -51,18 +50,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    _animationController = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: 5),
-    );
-    _animationController.addListener(() => setState(() {}));
     checkLoad();
   }
 
   Future<void> checkLoad() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('first', 1);
-    if ((prefs.getInt('load') ?? 0) == 1) _animationController.value = 100;
   }
 
   Future<void> getHighScore() async {
@@ -76,7 +69,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
-    _animationController.dispose();
     super.dispose();
   }
 
@@ -93,32 +85,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           SizedBox(height: 50),
           Align(
             alignment: Alignment.topCenter,
-            child: ClayContainer(
-                emboss: true,
-                height: 250,
-                width: 250,
-                borderRadius: 50,
-                color: themeColor,
-                child: Center(
-                    child: ClipRRect(
-                  borderRadius: BorderRadius.circular(50.0),
-                  child: LiquidLinearProgressIndicator(
-                    value: _animationController.value,
-                    valueColor: AlwaysStoppedAnimation(Colors.pink),
-                    backgroundColor: Colors.grey[200],
-                    borderColor: themeColor,
-                    borderWidth: 0.0,
-                    direction: Axis.vertical,
-                    center: ClayText(
-                      (_animationController.value * 100).toInt().toString(),
-                      emboss: true,
-                      size: 50,
-                      color: _animationController.value >= 0.55
-                          ? Colors.pink
-                          : Colors.grey[200],
-                    ),
-                  ),
-                ))),
+            child: ClayText(
+              "Neuble",
+              emboss: true,
+              size: 70,
+              color: themeColor,
+              style: TextStyle(decoration: TextDecoration.none),
+            ),
           ),
           SizedBox(height: 50),
           GestureDetector(
@@ -144,32 +117,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
             ),
             onTap: () async {
-              setState(() {
-                _animationController.forward();
-              });
-              final SharedPreferences prefs =
-                  await SharedPreferences.getInstance();
-              if (prefs.getInt('load') == 1)
-                Navigator.push(
-                    context,
-                    PageTransition(
-                        type: PageTransitionType.fade,
-                        duration: Duration(milliseconds: 500),
-                        child: GamePage()));
-              else {
-                Future.delayed(
-                  const Duration(seconds: 5),
-                  () async {
-                    prefs.setInt('load', 1);
-                    Navigator.push(
-                        context,
-                        PageTransition(
-                            type: PageTransitionType.fade,
-                            duration: Duration(milliseconds: 500),
-                            child: GamePage()));
-                  },
-                );
-              }
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      type: PageTransitionType.fade,
+                      duration: Duration(milliseconds: 500),
+                      child: GamePage()));
             },
           ),
           SizedBox(height: 25),
@@ -404,11 +357,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     prefs.setStringList("colorsList", colList);
 
     prefs.setInt('first', 0);
-    prefs.setInt('load', 0);
-
-    setState(() {
-      _animationController.value = 0;
-    });
 
     await prefs.setInt('theme', 0);
   }

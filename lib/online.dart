@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
 
 import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
 
 Timer _timer;
@@ -58,17 +59,22 @@ class GameState extends State<Game> {
   Random random = new Random();
 
   int _rup = 0, _tup = 0;
-  int time = 3 * 100;
+  int time = 12 * 100;
 
   int _start = 0;
-  var channel = IOWebSocketChannel.connect(Uri.parse('ws://parth-laptop:3000'));
+
+  bool hasStart = false;
+  var channel;
   @override
   initState() {
     getHighScore();
-    startTimer();
-    print("initState");
+    // startTimer();
+    // _timer.cancel();
+
     setState(() {
-      channel = IOWebSocketChannel.connect(Uri.parse('ws://parth-laptop:3000'));
+      // channel = IOWebSocketChannel.connect(Uri.parse('ws://parth-laptop:3000'));
+      channel = WebSocketChannel.connect(Uri.parse(
+          'wss://neuble-server-helloparthshah-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com'));
     });
     channel.sink.add("Hello");
     setState(() {
@@ -78,13 +84,41 @@ class GameState extends State<Game> {
     channel.stream.listen((data) {
       print(data);
       setState(() {
-        // ${posx},${posy},${x},${y},${radius},${score}
-        opponentX = double.parse(data.split(",")[0]);
-        opponentY = double.parse(data.split(",")[1]);
-        x1 = double.parse(data.split(",")[2]);
-        y1 = double.parse(data.split(",")[3]);
-        opponentRadius = double.parse(data.split(",")[4]);
-        opponentScore = int.parse(data.split(",")[5]);
+        if (data == 'Disconnected') {
+          if (_timer != null) _timer.cancel();
+          channel.sink.close();
+          Navigator.push(
+              context,
+              PageTransition(
+                  type: PageTransitionType.fade,
+                  duration: Duration(milliseconds: 500),
+                  child: HomePage()));
+
+          print('Disconnected');
+          return;
+        }
+        if (data == 'gameover') {
+          _timer.cancel();
+          overAlert("You Win");
+          return;
+        }
+        if (data != "Waiting" && !hasStart) {
+          print("Started");
+          startTimer();
+          hasStart = true;
+        }
+        if (hasStart) {
+          opponentX = double.parse(data.split(",")[0]) *
+              MediaQuery.of(context).size.width;
+          opponentY = double.parse(data.split(",")[1]) *
+              MediaQuery.of(context).size.height;
+          x1 = double.parse(data.split(",")[2]) *
+              MediaQuery.of(context).size.width;
+          y1 = double.parse(data.split(",")[3]) *
+              MediaQuery.of(context).size.height;
+          opponentRadius = double.parse(data.split(",")[4]);
+          opponentScore = int.parse(data.split(",")[5]);
+        }
       });
     }, onError: (error) {
       print(error);
@@ -98,13 +132,15 @@ class GameState extends State<Game> {
       oneSec,
       (Timer timer) => setState(
         () {
-          channel.sink.add("${posx},${posy},${x},${y},${radius},${score}");
+          channel.sink.add(
+              "${posx / MediaQuery.of(context).size.width},${posy / MediaQuery.of(context).size.height},${x / MediaQuery.of(context).size.width},${y / MediaQuery.of(context).size.height},${radius},${score}");
           if (_start < 1) {
             timer.cancel();
+            channel.sink.add("gameover");
             overAlert("Too Slow!");
           } else {
             checkCollision();
-            // _start = _start - 1;
+            _start = _start - 1;
           }
         },
       ),
@@ -120,11 +156,10 @@ class GameState extends State<Game> {
 
     setState(() {
       _highscore = prefs.getInt('highScore') ?? 0;
-      _rup = upgList[0];
-      _tup = upgList[1];
-      comboTime = upgList[2];
+      _rup = 1;
+      _tup = 1;
+      comboTime = 1;
       comboTime *= 25;
-      time = time * (_tup + 1);
       _start = time;
       coins = prefs.getInt('coins') ?? score;
       themeColor = test[prefs.getInt('theme') ?? 0];
@@ -220,7 +255,7 @@ class GameState extends State<Game> {
                               BorderRadius.all(Radius.circular(32)),
                           child: Center(
                               child: ClayText(
-                            "Restart",
+                            "Search",
                             emboss: true,
                             size: 25,
                             color: themeColor,
@@ -228,30 +263,11 @@ class GameState extends State<Game> {
                         ),
                         onTap: () {
                           Navigator.of(context).pop();
-                          _timer.cancel();
-                          setState(() {
-                            _start = time;
-                            posx = 300.0;
-                            posy = 300.0;
-                            x = random
-                                .nextInt(
-                                    MediaQuery.of(context).size.width.toInt())
-                                .toDouble();
-                            y = random
-                                .nextInt(
-                                    MediaQuery.of(context).size.height.toInt())
-                                .toDouble();
-                            x1 = 200;
-                            y1 = 200;
-
-                            radius = 50;
-                            pr = 10;
-                            score = 0;
-                            oldtime = 200;
-                            combo = 1;
-                            gameover = false;
-                          });
-                          startTimer();
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      super.widget));
                         },
                       ),
                       SizedBox(
@@ -323,12 +339,16 @@ class GameState extends State<Game> {
         _start += 50;
         if (_start > time) _start = time;
         radius += (4 - _rup);
-        x = random
-            .nextInt(MediaQuery.of(context).size.width.toInt())
-            .toDouble();
-        y = random
-            .nextInt(MediaQuery.of(context).size.height.toInt())
-            .toDouble();
+        x = pr +
+            random
+                .nextInt(
+                    MediaQuery.of(context).size.width.toInt() - 2 * pr.toInt())
+                .toDouble();
+        y = pr +
+            random
+                .nextInt(
+                    MediaQuery.of(context).size.height.toInt() - 2 * pr.toInt())
+                .toDouble();
         score += combo;
         oldtime = _start;
       });
@@ -344,6 +364,7 @@ class GameState extends State<Game> {
 
     if (gameover == true) {
       _timer.cancel();
+      channel.sink.add("gameover");
       overAlert("You did an OOPSIE!");
     }
   }
@@ -352,91 +373,137 @@ class GameState extends State<Game> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: new GestureDetector(
-        onPanUpdate: (details) => onTapDown(context, details),
-        child: new Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            new Container(color: themeColor),
-            Center(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                  ClayText(
-                    (_start / 100).toString(),
-                    emboss: true,
-                    size: 50,
-                    color: themeColor,
+      body: hasStart
+          ? new GestureDetector(
+              onPanUpdate: (details) => onTapDown(context, details),
+              child: new Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  new Container(color: themeColor),
+                  Center(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                        ClayText(
+                          (_start / 100).toString(),
+                          emboss: true,
+                          size: 50,
+                          color: themeColor,
+                        ),
+                        SizedBox(
+                          height: 50,
+                        ),
+                        ClayText(
+                          combo > 1 ? 'x' + (combo).toString() : "",
+                          emboss: true,
+                          size: 50,
+                          color: themeColor,
+                        ),
+                      ])),
+                  Positioned(
+                    child: Container(
+                      color: Colors.redAccent,
+                      height: pr,
+                      width: pr,
+                    ),
+                    left: x,
+                    top: y,
                   ),
-                  SizedBox(
-                    height: 50,
+                  Positioned(
+                    child: Container(
+                      color: Colors.blueAccent,
+                      height: pr,
+                      width: pr,
+                    ),
+                    left: x1,
+                    top: y1,
                   ),
-                  ClayText(
-                    combo > 1 ? 'x' + (combo).toString() : "",
-                    emboss: true,
-                    size: 50,
-                    color: themeColor,
+                  new Positioned(
+                    child: ClayContainer(
+                      color: themeColor,
+                      height: radius,
+                      width: radius,
+                      borderRadius: 75,
+                      curveType: CurveType.convex,
+                      child: Center(
+                        child: ClayText(
+                          score.toString(),
+                          emboss: true,
+                          size: radius / 2,
+                          color: themeColor,
+                        ),
+                      ),
+                    ),
+                    left: posx - radius / 2,
+                    top: posy - radius / 2,
                   ),
-                ])),
-            Positioned(
-              child: Container(
-                color: Colors.redAccent,
-                height: pr,
-                width: pr,
+                  new Positioned(
+                    child: ClayContainer(
+                      color: themeColor,
+                      height: opponentRadius,
+                      width: opponentRadius,
+                      borderRadius: 75,
+                      curveType: CurveType.convex,
+                      child: Center(
+                        child: ClayText(
+                          opponentScore.toString(),
+                          emboss: true,
+                          size: opponentRadius / 2,
+                          color: themeColor,
+                        ),
+                      ),
+                    ),
+                    left: opponentX - opponentRadius / 2,
+                    top: opponentY - opponentRadius / 2,
+                  )
+                ],
               ),
-              left: x,
-              top: y,
-            ),
-            Positioned(
-              child: Container(
-                color: Colors.blueAccent,
-                height: pr,
-                width: pr,
-              ),
-              left: x1,
-              top: y1,
-            ),
-            new Positioned(
-              child: ClayContainer(
-                color: themeColor,
-                height: radius,
-                width: radius,
-                borderRadius: 75,
-                curveType: CurveType.convex,
-                child: Center(
-                  child: ClayText(
-                    score.toString(),
-                    emboss: true,
-                    size: radius / 2,
-                    color: themeColor,
-                  ),
-                ),
-              ),
-              left: posx - radius / 2,
-              top: posy - radius / 2,
-            ),
-            new Positioned(
-              child: ClayContainer(
-                color: themeColor,
-                height: opponentRadius,
-                width: opponentRadius,
-                borderRadius: 75,
-                curveType: CurveType.convex,
-                child: Center(
-                  child: ClayText(
-                    opponentScore.toString(),
-                    emboss: true,
-                    size: opponentRadius / 2,
-                    color: themeColor,
-                  ),
-                ),
-              ),
-              left: opponentX - opponentRadius / 2,
-              top: opponentY - opponentRadius / 2,
             )
-          ],
-        ),
-      ),
+          : Container(
+              color: themeColor,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ClayText(
+                      "Loading...",
+                      emboss: true,
+                      size: 50,
+                      color: themeColor,
+                    ),
+                    SizedBox(
+                      height: 50,
+                    ),
+                    GestureDetector(
+                      child: ClayContainer(
+                        color: themeColor,
+                        width: 110,
+                        height: 45,
+                        customBorderRadius:
+                            BorderRadius.all(Radius.circular(32)),
+                        child: Center(
+                            child: ClayText(
+                          "Back",
+                          emboss: true,
+                          size: 25,
+                          color: themeColor,
+                        )),
+                      ),
+                      onTap: () {
+                        if (_timer != null) _timer.cancel();
+                        channel.sink.close();
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                                type: PageTransitionType.fade,
+                                duration: Duration(milliseconds: 500),
+                                child: HomePage()));
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 }
