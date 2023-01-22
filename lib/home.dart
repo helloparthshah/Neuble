@@ -15,19 +15,19 @@ import 'game.dart';
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
       title: 'Neuble',
       debugShowCheckedModeBanner: false,
-      home: Home(),
-      builder: (BuildContext context, Widget child) {
+      home: Home(key: UniqueKey()),
+      builder: (BuildContext context, Widget? child) {
         final MediaQueryData data = MediaQuery.of(context);
         return MediaQuery(
           data: data.copyWith(
             textScaleFactor: 1.0,
           ),
-          child: child,
+          child: child!,
         );
       },
     );
@@ -35,7 +35,7 @@ class HomePage extends StatelessWidget {
 }
 
 class Home extends StatefulWidget {
-  Home({Key key}) : super(key: key);
+  Home({required Key key}) : super(key: key);
   @override
   _HomeState createState() => _HomeState();
 }

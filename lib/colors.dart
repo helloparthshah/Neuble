@@ -4,11 +4,22 @@ import 'package:clay_containers/clay_containers.dart';
 import 'package:flutter/services.dart';
 import 'package:neuble/themes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:ui';
+
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  // Override behavior methods and getters like dragDevices
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        // etc.
+      };
+}
 
 class Col extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     return new Scaffold(
       resizeToAvoidBottomInset: false,
       body: new ColorsPage(),
@@ -38,10 +49,10 @@ class ColorsPageState extends State<ColorsPage> {
 
   Future<void> getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<int> colorsList = List<int>.filled(test.length, 0);
+    List<int>? colorsList = List<int>.filled(test.length, 0);
     if (prefs.getStringList('colorsList') != null) {
       colorsList =
-          prefs.getStringList('colorsList').map((i) => int.parse(i)).toList();
+          prefs.getStringList('colorsList')?.map((i) => int.parse(i)).toList();
     } else {
       colorsList[0] = 1;
     }
@@ -53,7 +64,7 @@ class ColorsPageState extends State<ColorsPage> {
     }).toList(); */
 
     setState(() {
-      cols = colorsList;
+      cols = colorsList!;
 
       themeColor = test[prefs.getInt('theme') ?? 0];
       curTheme = themeColor;
@@ -221,15 +232,18 @@ class ColorsPageState extends State<ColorsPage> {
               Container(
                 margin: EdgeInsets.symmetric(vertical: 20.0),
                 height: 250,
-                child: ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
-                  physics: new BouncingScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: cols.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    print(cols.length);
-                    return colorTile(index);
-                  },
+                child: ScrollConfiguration(
+                  behavior: MyCustomScrollBehavior(),
+                  child: ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: 25.0),
+                    physics: new BouncingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: cols.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      print(cols.length);
+                      return colorTile(index);
+                    },
+                  ),
                 ),
               ),
               SizedBox(

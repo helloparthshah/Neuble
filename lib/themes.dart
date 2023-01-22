@@ -18,5 +18,5 @@ List test = [
   Color(0xFF33373D), //dark 33373D  #25262A 16171b
 ];
 
-Color curTheme;
-int load;
+Color curTheme = test[0];
+int load = 0;

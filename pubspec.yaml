@@ -11,24 +11,23 @@ description: A new Flutter project.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 2.1.0+3
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  clay_containers: ^0.2.2
-  liquid_progress_indicator: ^0.3.2
-  shared_preferences: ^0.5.6+1
-  page_transition: "^1.1.5"
-  introduction_screen: ^1.0.7
+  clay_containers: ^0.3.2
+  liquid_progress_indicator: ^0.4.0
+  shared_preferences: ^2.0.17
+  page_transition: ^2.0.9
+  introduction_screen: ^3.1.4
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
-  games_services: ^1.0.0
+  cupertino_icons: ^1.0.5
   web_socket_channel: ^2.2.0
   # play_games: ^0.5.5
 
@@ -37,8 +36,8 @@ dev_dependencies:
     sdk: flutter
   flutter_launcher_icons: "^0.9.1"
   
-  build_runner: ^1.6.2
-  build_web_compilers: ^2.0.0
+  build_runner: ^2.3.3
+  build_web_compilers: ^3.2.7
 
 flutter_icons:
   android: "launcher_icon"

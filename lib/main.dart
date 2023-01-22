@@ -7,7 +7,7 @@ import 'package:neuble/themes.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
-import 'package:games_services/games_services.dart';
+import 'dart:ui';
 
 void main() {
   runApp(new MyApp());
@@ -31,8 +31,8 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  AnimationController _animationController;
-  int first;
+  late AnimationController _animationController;
+  late int first;
   @override
   void initState() {
     super.initState();
@@ -89,7 +89,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     q();
 
     return Scaffold(

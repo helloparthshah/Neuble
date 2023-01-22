@@ -11,7 +11,7 @@ import 'colors.dart';
 class Upgrades extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     return new Scaffold(
       resizeToAvoidBottomInset: false,
       body: new UpgradesPage(),
@@ -44,7 +44,7 @@ class MyWidget extends StatefulWidget {
 class MyWidgetState extends State<MyWidget> {
   int coins = 0;
   List<int> upg = [0, 0, 0];
-  Color themeColor;
+  late Color themeColor;
   int cost = 0;
 
   @override

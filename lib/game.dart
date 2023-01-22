@@ -10,12 +10,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home.dart';
 
-Timer _timer;
-
 class GamePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     return MaterialApp(
       title: 'Neuble',
       debugShowCheckedModeBanner: false,
@@ -32,6 +30,7 @@ class Game extends StatefulWidget {
 }
 
 class GameState extends State<Game> {
+  late Timer _timer;
   double posx = 300.0;
   double posy = 300.0;
   double x = 100, y = 100;
@@ -43,7 +42,7 @@ class GameState extends State<Game> {
   int _highscore = 0;
   bool gameover = false;
   int coins = 0;
-  Color themeColor;
+  late Color themeColor;
 
   int comboTime = 0;
 
@@ -260,7 +259,7 @@ class GameState extends State<Game> {
   }
 
   void onTapDown(BuildContext context, details) {
-    final RenderBox box = context.findRenderObject();
+    final RenderBox box = context.findRenderObject() as RenderBox;
     final Offset localOffset = box.globalToLocal(details.globalPosition);
     setState(() {
       posx = localOffset.dx;

@@ -10,16 +10,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home.dart';
 
-import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
-
-Timer _timer;
 
 class OnlineGame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     return MaterialApp(
       title: 'Neuble',
       debugShowCheckedModeBanner: false,
@@ -36,6 +33,7 @@ class Game extends StatefulWidget {
 }
 
 class GameState extends State<Game> {
+  late Timer _timer;
   double opponentX = 300.0;
   double opponentY = 300.0;
   double posx = 300.0;
@@ -50,7 +48,7 @@ class GameState extends State<Game> {
   int _highscore = 0;
   bool gameover = false;
   int coins = 0;
-  Color themeColor;
+  late Color themeColor;
 
   int comboTime = 0;
 
@@ -73,8 +71,8 @@ class GameState extends State<Game> {
 
     setState(() {
       // channel = IOWebSocketChannel.connect(Uri.parse('ws://parth-laptop:3000'));
-      channel = WebSocketChannel.connect(Uri.parse(
-          'wss://neuble-server-helloparthshah-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com'));
+      channel = WebSocketChannel.connect(
+          Uri.parse('wss://neuble-server.onrender.com/'));
     });
     channel.sink.add("Hello");
     setState(() {
@@ -87,7 +85,7 @@ class GameState extends State<Game> {
         if (data == 'Disconnected') {
           if (_timer != null) _timer.cancel();
           channel.sink.close();
-          Navigator.push(
+          Navigator.pushReplacement(
               context,
               PageTransition(
                   type: PageTransitionType.fade,
@@ -107,7 +105,8 @@ class GameState extends State<Game> {
           startTimer();
           hasStart = true;
         }
-        if (hasStart) {
+        if (hasStart && data != "Waiting" && data != "gameover") {
+          print(data);
           opponentX = double.parse(data.split(",")[0]) *
               MediaQuery.of(context).size.width;
           opponentY = double.parse(data.split(",")[1]) *
@@ -132,8 +131,12 @@ class GameState extends State<Game> {
       oneSec,
       (Timer timer) => setState(
         () {
-          channel.sink.add(
-              "${posx / MediaQuery.of(context).size.width},${posy / MediaQuery.of(context).size.height},${x / MediaQuery.of(context).size.width},${y / MediaQuery.of(context).size.height},${radius},${score}");
+          try {
+            channel.sink.add(
+                "${posx / MediaQuery.of(context).size.width},${posy / MediaQuery.of(context).size.height},${x / MediaQuery.of(context).size.width},${y / MediaQuery.of(context).size.height},${radius},${score}");
+          } catch (e) {
+            print(e);
+          }
           if (_start < 1) {
             timer.cancel();
             channel.sink.add("gameover");
@@ -262,12 +265,14 @@ class GameState extends State<Game> {
                           )),
                         ),
                         onTap: () {
+                          _timer.cancel();
+                          // channel.sink.close(status.normalClosure);
                           Navigator.of(context).pop();
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                   builder: (BuildContext context) =>
-                                      super.widget));
+                                      new OnlineGame()));
                         },
                       ),
                       SizedBox(
@@ -316,7 +321,7 @@ class GameState extends State<Game> {
   }
 
   void onTapDown(BuildContext context, details) {
-    final RenderBox box = context.findRenderObject();
+    final RenderBox box = context.findRenderObject() as RenderBox;
     final Offset localOffset = box.globalToLocal(details.globalPosition);
     setState(() {
       posx = localOffset.dx;
